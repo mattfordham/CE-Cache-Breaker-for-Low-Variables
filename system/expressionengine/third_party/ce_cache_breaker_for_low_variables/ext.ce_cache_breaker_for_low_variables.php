@@ -14,7 +14,7 @@ class Ce_cache_breaker_for_low_variables_ext {
 	
 	public $settings 		= array();
 	public $description		= 'Allows for cache breaking in CE Cache when Low Variables are updated';
-	public $docs_url		= 'http://www.revolvercreative.com';
+	public $docs_url		= 'https://github.com/mattfordham/CE-Cache-Breaker-for-Low-Variables';
 	public $name			= 'CE Cache Breaker for Low Variables';
 	public $settings_exist	= 'n';
 	public $version			= '1.0';
