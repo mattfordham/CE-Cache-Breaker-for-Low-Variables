@@ -1,7 +1,7 @@
 CE Cache Breaker for Low Variables
 ==================================
 
-This simple ExpressionEngine extension will break any CE Cache item tagged with "low_variables"
+This simple ExpressionEngine extension will break any CE Cache item tagged with the tag "low_variables"
 
 
 To do
