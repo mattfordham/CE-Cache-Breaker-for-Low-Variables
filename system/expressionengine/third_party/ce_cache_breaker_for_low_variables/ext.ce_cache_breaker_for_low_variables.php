@@ -12,12 +12,16 @@
 
 class Ce_cache_breaker_for_low_variables_ext {
 	
-	public $settings 		= array();
-	public $description		= 'Allows for cache breaking in CE Cache when Low Variables are updated';
-	public $docs_url		= 'https://github.com/mattfordham/CE-Cache-Breaker-for-Low-Variables';
-	public $name			= 'CE Cache Breaker for Low Variables';
-	public $settings_exist	= 'n';
-	public $version			= '1.0';
+	public $settings 			= array();
+	public $default_settings 	= array(
+  		'refresh' => 0, 
+		'refresh_time' => 0
+	);
+	public $description			= 'Allows for cache breaking in CE Cache when Low Variables are updated';
+	public $docs_url			= 'https://github.com/mattfordham/CE-Cache-Breaker-for-Low-Variables';
+	public $name				= 'CE Cache Breaker for Low Variables';
+	public $settings_exist		= 'y';
+	public $version				= '1.1';
 	
 	private $EE;
 	
@@ -31,6 +35,31 @@ class Ce_cache_breaker_for_low_variables_ext {
 		$this->EE =& get_instance();
 		$this->settings = $settings;
 	}// ----------------------------------------------------------------------
+
+	/**
+	 * Settings
+	 *
+	 * Settings fields for the extension
+	 *
+	 * @return void
+	 */
+	public function settings()
+	{
+	    return array(
+	  		'refresh' => array('r', array(
+				'0' => 'No', 
+				'1' => 'Yes'
+			)), 
+			'refresh_time' => array('s', array(
+				'0' => '0',
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4', 
+				'5' => '5'
+			))
+		);
+	}
 	
 	/**
 	 * Activate Extension
@@ -40,21 +69,17 @@ class Ce_cache_breaker_for_low_variables_ext {
 	 * @return void
 	 */
 	public function activate_extension()
-	{
-		// Setup custom settings in this array.
-		$this->settings = array();
-		
+	{		
 		$data = array(
 			'class'		=> __CLASS__,
 			'method'	=> 'low_variables_post_save',
 			'hook'		=> 'low_variables_post_save',
-			'settings'	=> serialize($this->settings),
+			'settings'	=> serialize($this->default_settings),
 			'version'	=> $this->version,
 			'enabled'	=> 'y'
 		);
 
 		$this->EE->db->insert('extensions', $data);			
-		
 	}	
 
 	// ----------------------------------------------------------------------
@@ -94,11 +119,11 @@ class Ce_cache_breaker_for_low_variables_ext {
       $tags = array('low_variables');
 
       //whether or not to refresh the local items after they are cleared
-      $refresh = TRUE;
+      $refresh = $this->settings['refresh'];
 
       //the number of seconds to wait between refreshing (and deleting)
       //items. Only applicable if refreshing.
-      $refresh_time = 1;
+      $refresh_time = $this->settings['refresh_time'];
 
       $cache_break->break_cache( $items, $tags, $refresh, $refresh_time );
     }
@@ -135,6 +160,13 @@ class Ce_cache_breaker_for_low_variables_ext {
 		{
 			return FALSE;
 		}
+
+		$data = array(
+			'settings'	=> serialize($this->default_settings),
+			'version'	=> $this->version
+		);
+
+		$this->EE->db->where('class', __CLASS__)->update('extensions', $data);
 	}	
 	
 	// ----------------------------------------------------------------------
